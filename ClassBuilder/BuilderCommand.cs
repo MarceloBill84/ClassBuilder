@@ -1,7 +1,7 @@
-﻿using EnvDTE;
+﻿using ClassBuilder.Factory;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using System;
 using System.ComponentModel.Design;
 using System.IO;
 using Task = System.Threading.Tasks.Task;
@@ -20,36 +20,24 @@ namespace ClassBuilder
 
 			var menuCommandID = new CommandID(PackageGuids.guidClassBuilderPackageCmdSet, 0x0100);
 
-			var cmd = new OleMenuCommand((s, e) => Execute(s, e, dte), menuCommandID, false);
+			var cmd = new OleMenuCommand((s, e) => Execute(dte), menuCommandID, false);
 			commandService.AddCommand(cmd);
 		}
 
-		private static void Execute(object teste, EventArgs e, DTE2 dte)
+		private static void Execute(DTE2 dte)
 		{
 
 			ThreadHelper.ThrowIfNotOnUIThread();
 
 			var item = dte.SelectedItems.Item(1).ProjectItem;
 
+			var originalFileName = item.FileNames[0];
 
-			var test = File.ReadAllText(item.FileNames[0]);
+			var fileContent = File.ReadAllText(originalFileName);
 
-			//var textManager = (IVsTextManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
+			var newFileName = string.Concat(item.FileNames[0].Substring(0, originalFileName.Length - 3), "Builder.cs");
 
-
-			//textManager.
-
-			/*string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-			string title = "BuilderCommand";
-
-			// Show a message box to prove we were here
-			VsShellUtilities.ShowMessageBox(
-				this.package,
-				message,
-				title,
-				OLEMSGICON.OLEMSGICON_INFO,
-				OLEMSGBUTTON.OLEMSGBUTTON_OK,
-				OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);*/
+			File.WriteAllText(newFileName, BuilderFactory.Create(fileContent));
 		}
 	}
 }
