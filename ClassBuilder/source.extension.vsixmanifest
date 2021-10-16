@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ClassBuilder.546d03b9-d6ed-4ae9-952b-54efa96ef5b5" Version="1.0" Language="en-US" Publisher="Marcelo Jose da Silva" />
+        <Identity Id="ClassBuilder.546d03b9-d6ed-4ae9-952b-54efa96ef5b5" Version="1.0.0" Language="en-US" Publisher="Marcelo Jose da Silva" />
         <DisplayName>Generate Builder from C# Model</DisplayName>
         <Description xml:space="preserve">Generate a builder class from a C# model</Description>
         <Icon>builder_94052.ico</Icon>
