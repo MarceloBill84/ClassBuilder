@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BuilderCommand.cs" />
     <Compile Include="Dto\PropertyInfo.cs" />
+    <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Factory\BuilderFactory.cs" />
     <Compile Include="ClassBuilderPackage1.cs">

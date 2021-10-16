@@ -1,6 +1,8 @@
 ﻿using ClassBuilder.Dto;
+using ClassBuilder.Exceptions;
 using ClassBuilder.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,11 +12,18 @@ namespace ClassBuilder.Factory
 	{
 		public static string Create(string fileContent)
 		{
+			Validate(fileContent);
+
 			var content = new StringBuilder();
 
 			content.Append(GetUsings(fileContent));
 
 			fileContent = fileContent.Substring(content.Length);
+
+			var properties = GetPropertiesInfo(fileContent);
+
+			if (!properties.Any())
+				throw new ValidationException("It wasn't identified public properties to generate builder class");
 
 			content.Append(GetNameSpace(fileContent));
 
@@ -26,8 +35,6 @@ namespace ClassBuilder.Factory
 			content.AppendLine(string.Concat("\tpublic class ", newClassName));
 
 			content.AppendLine("\t{");
-
-			var properties = GetPropertiesInfo(fileContent);
 
 			GeneratePrivateVariables(content, properties);
 
@@ -42,6 +49,12 @@ namespace ClassBuilder.Factory
 			content.AppendLine("}");
 
 			return content.ToString();
+		}
+
+		private static void Validate(string fileContent)
+		{
+			if (fileContent.IndexOf("namespace") < 0)
+				throw new ValidationException("The file selected is not valid.");
 		}
 
 		private static void GenerateMethodBuild(StringBuilder content, string originalClassName, IList<PropertyInfo> properties)
@@ -113,7 +126,9 @@ namespace ClassBuilder.Factory
 		{
 			var propertyes = new List<PropertyInfo>();
 
-			foreach (Match item in Regex.Matches(fileContent, @"(?>public)\s+(?!class)((static|readonly)\s)?(?<Type>[^\s\(]+)\s+(?<Name>[^\s\(]+)\s+(?!\()"))
+			//old: @"(?>public)\s+(?!class)((static|readonly)\s)?(?<Type>[^\s\(]+)\s+(?<Name>[^\s\(]+)\s+(?!\()"
+
+			foreach (Match item in Regex.Matches(fileContent, @"(?>public)\s+(?!class)((static|readonly)\s)?(?<Type>(\S+(?:<.+?>)?)(?=\s+\w+\s*\{\s*get))\s+(?<Name>[^\s]+)(?=\s*\{\s*get)"))
 			{
 				propertyes.Add(new PropertyInfo(item.Groups["Type"].Value, item.Groups["Name"].Value));
 			}
