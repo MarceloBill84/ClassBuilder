@@ -27,7 +27,7 @@ namespace ClassBuilder.Factory
 
 			content.Append(GetNameSpace(fileContent));
 
-			content.Append("{\n");
+			content.AppendLine("{");
 
 			var originalClassName = GetOriginalClassName(fileContent);
 			var newClassName = string.Concat(originalClassName, "Builder");
