@@ -53,7 +53,7 @@ namespace ClassBuilder.Factory
 
 		private static void Validate(string fileContent)
 		{
-			if (fileContent.IndexOf("namespace") < 0)
+			if (fileContent.IndexOf("namespace ") < 0)
 				throw new ValidationException("The file selected is not valid.");
 		}
 
@@ -125,8 +125,6 @@ namespace ClassBuilder.Factory
 		private static IList<PropertyInfo> GetPropertiesInfo(string fileContent)
 		{
 			var propertyes = new List<PropertyInfo>();
-
-			//old: @"(?>public)\s+(?!class)((static|readonly)\s)?(?<Type>[^\s\(]+)\s+(?<Name>[^\s\(]+)\s+(?!\()"
 
 			foreach (Match item in Regex.Matches(fileContent, @"(?>public)\s+(?!class)((static|readonly)\s)?(?<Type>(\S+(?:<.+?>)?)(?=\s+\w+\s*\{\s*get))\s+(?<Name>[^\s]+)(?=\s*\{\s*get)"))
 			{

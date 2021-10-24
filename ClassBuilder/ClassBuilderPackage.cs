@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TextTemplating.VSHost;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -9,8 +8,6 @@ namespace ClassBuilder
 {
 	[PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[Guid(PackageGuids.guidClassBuilderPackageString)]
-	[ProvideCodeGenerator(typeof(GenerateBuilder), GenerateBuilder.Name, GenerateBuilder.Description, true, RegisterCodeBase = true)]
-	[ProvideCodeGeneratorExtension(GenerateBuilder.Name, "cs")]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
 	[ProvideUIContextRule(PackageGuids.guidClassBuilderPackageString,
 		name: "CS files",

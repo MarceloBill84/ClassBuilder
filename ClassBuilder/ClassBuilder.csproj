@@ -55,7 +55,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ClassBuilderPackage.vsct</DependentUpon>
     </Compile>
-    <Compile Include="GenerateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClassBuilderPackage.cs" />
   </ItemGroup>
