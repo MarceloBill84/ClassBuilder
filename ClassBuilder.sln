@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31727.386
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassBuilder", "ClassBuilder\ClassBuilder.csproj", "{773C5066-802F-4691-B24D-E458E9D65590}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ClassBuilder.Shared", "ClassBuilder.Shared\ClassBuilder.Shared.shproj", "{5C5298C6-6511-4357-8449-43F09A6C475C}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ClassBuilder.Shared\ClassBuilder.Shared.projitems*{5c5298c6-6511-4357-8449-43f09a6c475c}*SharedItemsImports = 13
+		ClassBuilder.Shared\ClassBuilder.Shared.projitems*{773c5066-802f-4691-b24d-e458e9d65590}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
