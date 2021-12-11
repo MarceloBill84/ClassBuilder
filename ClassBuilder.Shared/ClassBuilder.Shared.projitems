@@ -10,14 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BuilderCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ClassBuilderPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dto\PropertyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ValidationException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Factory\BuilderFactory.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)builder_94052.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 </Project>
