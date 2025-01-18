@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31727.386
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassBuilder", "ClassBuilder\ClassBuilder.csproj", "{773C5066-802F-4691-B24D-E458E9D65590}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassBuilder.Tests", "ClassBuilder.Tests\ClassBuilder.Tests.csproj", "{6851BE56-30E5-46F4-9B7D-D9B10D7066FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassBuilder.Borders", "ClassBuilder.Borders\ClassBuilder.Borders.csproj", "{CA84B193-6343-4C29-B51C-A7D18189ECBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{773C5066-802F-4691-B24D-E458E9D65590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{773C5066-802F-4691-B24D-E458E9D65590}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{773C5066-802F-4691-B24D-E458E9D65590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6851BE56-30E5-46F4-9B7D-D9B10D7066FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6851BE56-30E5-46F4-9B7D-D9B10D7066FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6851BE56-30E5-46F4-9B7D-D9B10D7066FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6851BE56-30E5-46F4-9B7D-D9B10D7066FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA84B193-6343-4C29-B51C-A7D18189ECBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA84B193-6343-4C29-B51C-A7D18189ECBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA84B193-6343-4C29-B51C-A7D18189ECBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA84B193-6343-4C29-B51C-A7D18189ECBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
