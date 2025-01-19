@@ -1,12 +1,13 @@
-﻿using ClassBuilder.Borders.Dto;
-using ClassBuilder.Borders.Exceptions;
-using ClassBuilder.Borders.Extensions;
+﻿using ClassBuilder.Dto;
+using ClassBuilder.Exceptions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace ClassBuilder.Borders.Factories
+namespace ClassBuilder.Factories
 {
     public static class BuilderFactory
     {
@@ -26,7 +27,7 @@ namespace ClassBuilder.Borders.Factories
             if (string.IsNullOrWhiteSpace(nameSpace))
                 throw new ValidationException("It wasn't identified the namespace to generate builder class");
 
-            ClassDeclarationSyntax? classDeclaration = root.DescendantNodes()
+            ClassDeclarationSyntax classDeclaration = root.DescendantNodes()
                                    .OfType<ClassDeclarationSyntax>()
                                    .FirstOrDefault();
 
@@ -90,7 +91,7 @@ namespace ClassBuilder.Borders.Factories
                                            .OfType<NamespaceDeclarationSyntax>()
                                            .FirstOrDefault();
 
-            if (namespaceDeclaration is not null)
+            if (namespaceDeclaration != null)
                 return namespaceDeclaration.Name.ToString();
 
             var fileScoepedNamespaceDeclaration = root.DescendantNodes()

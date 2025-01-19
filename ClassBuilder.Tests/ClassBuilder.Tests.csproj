@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassBuilder.Borders\ClassBuilder.Borders.csproj" />
+    <ProjectReference Include="..\ClassBuilder\ClassBuilder.csproj" />
   </ItemGroup>
 
   <ItemGroup>

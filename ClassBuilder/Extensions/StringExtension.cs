@@ -1,4 +1,4 @@
-﻿namespace ClassBuilder.Borders.Extensions
+﻿namespace ClassBuilder.Extensions
 {
     public static class StringExtension
     {

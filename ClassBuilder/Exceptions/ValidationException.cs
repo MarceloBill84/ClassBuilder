@@ -1,4 +1,6 @@
-﻿namespace ClassBuilder.Borders.Exceptions
+﻿using System;
+
+namespace ClassBuilder.Exceptions
 {
     public class ValidationException : Exception
     {

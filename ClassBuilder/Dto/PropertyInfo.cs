@@ -1,4 +1,4 @@
-﻿namespace ClassBuilder.Borders.Dto
+﻿namespace ClassBuilder.Dto
 {
     public class PropertyInfo
     {

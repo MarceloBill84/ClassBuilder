@@ -1,4 +1,4 @@
-using ClassBuilder.Borders.Factories;
+using ClassBuilder.Factories;
 
 namespace ClassBuilder.Tests.Factories
 {
