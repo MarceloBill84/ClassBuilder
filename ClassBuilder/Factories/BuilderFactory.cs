@@ -25,12 +25,7 @@ namespace ClassBuilder.Factories
 
             string nameSpace = GetNameSpace(syntaxTree);
 
-            if (string.IsNullOrWhiteSpace(nameSpace))
-                throw new ValidationException("It wasn't identified the namespace to generate builder class");
-
-            ClassDeclarationSyntax classDeclaration = root.DescendantNodes()
-                                   .OfType<ClassDeclarationSyntax>()
-                                   .FirstOrDefault();
+            TypeDeclarationSyntax classDeclaration = GetTypeDeclarion(root);
 
             if (classDeclaration is null)
                 throw new ValidationException("It wasn't identified the class to generate builder class");
@@ -48,7 +43,29 @@ namespace ClassBuilder.Factories
             if (!propertiesInfo.Any())
                 throw new ValidationException("It wasn't identified public properties to generate builder class");
 
+            GenerateBuilder(content, usings, nameSpace, originalClassName, propertiesInfo);
 
+            return content.ToString();
+        }
+
+        private static TypeDeclarationSyntax GetTypeDeclarion(CompilationUnitSyntax root)
+        {
+            TypeDeclarationSyntax classDeclaration = root.DescendantNodes()
+                                   .OfType<ClassDeclarationSyntax>()
+                                   .FirstOrDefault();
+
+            if (classDeclaration != null)
+                return classDeclaration;
+
+            TypeDeclarationSyntax recordDeclaration = root.DescendantNodes()
+                                   .OfType<RecordDeclarationSyntax>()
+                                   .FirstOrDefault();
+
+            return recordDeclaration;
+        }
+
+        private static void GenerateBuilder(StringBuilder content, List<string> usings, string nameSpace, string originalClassName, List<PropertyInfo> propertiesInfo)
+        {
             var newClassName = $"{originalClassName}Builder";
 
             if (usings.Any())
@@ -61,7 +78,8 @@ namespace ClassBuilder.Factories
                 content.AppendLine();
             }
 
-            content.AppendLine(nameSpace);
+            if (!string.IsNullOrWhiteSpace(nameSpace))
+                content.AppendLine($"namespace {nameSpace}");
 
             content.AppendLine("{");
 
@@ -80,8 +98,6 @@ namespace ClassBuilder.Factories
             content.AppendLine("\t}");
 
             content.AppendLine("}");
-
-            return content.ToString();
         }
 
         private static string GetNameSpace(SyntaxTree syntaxTree)
@@ -157,7 +173,7 @@ namespace ClassBuilder.Factories
             }
         }
 
-        static bool IsEligibleForBuilder(PropertyDeclarationSyntax property, ClassDeclarationSyntax classDeclaration)
+        static bool IsEligibleForBuilder(PropertyDeclarationSyntax property, TypeDeclarationSyntax classDeclaration)
         {
             // Verifica se a propriedade é pública
             bool isPublic = property.Modifiers.Any(SyntaxKind.PublicKeyword);
@@ -175,7 +191,7 @@ namespace ClassBuilder.Factories
             return isPublic && (!hasPrivateSetter || isSetInConstructor);
         }
 
-        static bool IsAssignedInConstructor(PropertyDeclarationSyntax property, ClassDeclarationSyntax classDeclaration)
+        static bool IsAssignedInConstructor(PropertyDeclarationSyntax property, TypeDeclarationSyntax classDeclaration)
         {
             var constructors = classDeclaration.Members.OfType<ConstructorDeclarationSyntax>();
             var propertyName = property.Identifier.Text;

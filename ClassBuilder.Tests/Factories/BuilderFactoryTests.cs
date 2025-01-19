@@ -27,6 +27,8 @@ namespace Authentication.Application.ViewModels
 }";
 
             var result = BuilderFactory.Create(fileContent);
+
+
         }
 
         [Fact]
@@ -42,6 +44,22 @@ public class BankAccount(string accountID, string owner)
 
     public override string ToString() => $""Account ID: {AccountID}, Owner: {Owner}"";
 }";
+
+            var result = BuilderFactory.Create(fileContent);
+        }
+
+        [Fact]
+        public void TestRecord()
+        {
+            var fileContent = @"namespace ClassBuilder.Dto
+{
+    public record Cliente
+    {
+        public string Nome { get; init; }
+        public string Email { get; init; }
+    }
+}
+";
 
             var result = BuilderFactory.Create(fileContent);
         }
