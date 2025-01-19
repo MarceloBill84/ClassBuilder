@@ -1,5 +1,5 @@
-﻿using ClassBuilder.Borders.Exceptions;
-using ClassBuilder.Borders.Factories;
+﻿using ClassBuilder.Exceptions;
+using ClassBuilder.Factories;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
