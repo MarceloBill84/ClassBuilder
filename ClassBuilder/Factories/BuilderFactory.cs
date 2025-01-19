@@ -1,5 +1,6 @@
 ﻿using ClassBuilder.Dto;
 using ClassBuilder.Exceptions;
+using ClassBuilder.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

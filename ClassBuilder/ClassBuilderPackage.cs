@@ -12,8 +12,8 @@ namespace ClassBuilder
     [ProvideUIContextRule(PackageGuids.guidClassBuilderPackageString,
         name: "CS files",
         expression: "Cs",
-        termNames: ["Cs"],
-        termValues: ["HierSingleSelectionName:.cs"])]
+        termNames: new[] { "Cs" },
+        termValues: new[] { "HierSingleSelectionName:.cs" })]
     public sealed class ClassBuilderPackage : AsyncPackage
     {
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
