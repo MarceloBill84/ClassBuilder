@@ -16,7 +16,7 @@ namespace Authentication.Application.ViewModels
 	{
 		public string Name { get; set; }
 		public string Password { get; set; }
-		public decimal Longitude { get; set; }
+		public decimal? Longitude { get; set; }
 		public decimal Latitude { get; set; }
 
         public decimal Total()
@@ -58,6 +58,25 @@ public class BankAccount(string accountID, string owner)
         public string Nome { get; init; }
         public string Email { get; init; }
     }
+}
+";
+
+            var result = BuilderFactory.Create(fileContent);
+        }
+
+        [Fact]
+        public void TestDataMember()
+        {
+            var fileContent = @"public class MyClass
+{
+    private string fullName;
+
+    [DataMember]
+   public string FullName
+   {
+       get { return fullName; }
+       set { fullName = value; }
+   }
 }
 ";
 
