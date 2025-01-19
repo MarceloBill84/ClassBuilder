@@ -100,5 +100,32 @@ public class BankAccount(string accountID, string owner)
             Assert.NotNull(result);
             Assert.Contains($"{Constants.PrefixMethodName}FullName", result);
         }
+
+        [Fact]
+        public void TestStruct()
+        {
+            var fileContent = @"public struct Pessoa
+{
+    public int Idade { get; set; }
+    public string Nome { get; set; }
+    public string Cpf { get; set; }
+    public string Email { get; set; }
+
+    public override string ToString()
+    {
+        return $""Nome: {this.Nome}"" +
+               $""Email: {this.Email}"";
+    }
+}";
+
+            var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"{Constants.PrefixMethodName}Idade", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Cpf", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Email", result);
+            Assert.DoesNotContain("ToString", result);
+        }
     }
 }

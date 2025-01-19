@@ -62,7 +62,14 @@ namespace ClassBuilder.Factories
                                    .OfType<RecordDeclarationSyntax>()
                                    .FirstOrDefault();
 
-            return recordDeclaration;
+            if (recordDeclaration != null)
+                return recordDeclaration;
+
+            TypeDeclarationSyntax structDeclaration = root.DescendantNodes()
+                                   .OfType<StructDeclarationSyntax>()
+                                   .FirstOrDefault();
+
+            return structDeclaration;
         }
 
         private static void GenerateBuilder(StringBuilder content, List<string> usings, string nameSpace, string originalClassName, List<PropertyInfo> propertiesInfo)
