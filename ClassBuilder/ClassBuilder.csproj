@@ -51,6 +51,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ClassBuilderPackage.vsct</DependentUpon>
     </Compile>
+    <Compile Include="Constants\Constants.cs" />
     <Compile Include="Dto\PropertyInfo.cs" />
     <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Extensions\StringExtension.cs" />

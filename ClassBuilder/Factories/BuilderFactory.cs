@@ -1,4 +1,5 @@
-﻿using ClassBuilder.Dto;
+﻿using ClassBuilder.Constanst;
+using ClassBuilder.Dto;
 using ClassBuilder.Exceptions;
 using ClassBuilder.Extensions;
 using Microsoft.CodeAnalysis;
@@ -156,7 +157,7 @@ namespace ClassBuilder.Factories
         {
             foreach (var item in properties)
             {
-                content.AppendLine($"\t\tpublic {className} With{item.Name}({item.Type} {item.Name.GetWordWithFirstLetterDown()})");
+                content.AppendLine($"\t\tpublic {className} {Constants.PrefixMethodName}{item.Name}({item.Type} {item.Name.GetWordWithFirstLetterDown()})");
                 content.AppendLine("\t\t{");
                 content.AppendLine($"\t\t\t_{item.Name.GetWordWithFirstLetterDown()} = {item.Name.GetWordWithFirstLetterDown()};");
                 content.AppendLine("\t\t\treturn this;");

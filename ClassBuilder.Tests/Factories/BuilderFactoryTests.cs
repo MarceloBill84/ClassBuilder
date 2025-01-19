@@ -1,3 +1,4 @@
+using ClassBuilder.Constanst;
 using ClassBuilder.Factories;
 
 namespace ClassBuilder.Tests.Factories
@@ -28,7 +29,12 @@ namespace Authentication.Application.ViewModels
 
             var result = BuilderFactory.Create(fileContent);
 
-
+            Assert.NotNull(result);
+            Assert.Contains($"{Constants.PrefixMethodName}Name", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Password", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Longitude", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Latitude", result);
+            Assert.DoesNotContain("Total", result);
         }
 
         [Fact]
@@ -46,6 +52,11 @@ public class BankAccount(string accountID, string owner)
 }";
 
             var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"{Constants.PrefixMethodName}AccountID", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Owner", result);
+            Assert.DoesNotContain("ToString", result);
         }
 
         [Fact]
@@ -62,6 +73,10 @@ public class BankAccount(string accountID, string owner)
 ";
 
             var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Email", result);
         }
 
         [Fact]
@@ -81,6 +96,9 @@ public class BankAccount(string accountID, string owner)
 ";
 
             var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"{Constants.PrefixMethodName}FullName", result);
         }
     }
 }
