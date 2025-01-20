@@ -127,5 +127,53 @@ public class BankAccount(string accountID, string owner)
             Assert.Contains($"{Constants.PrefixMethodName}Email", result);
             Assert.DoesNotContain("ToString", result);
         }
+
+        [Fact]
+        public void TestMultiClassInFile()
+        {
+            var fileContent = @"using System;
+using lerolero;
+
+namespace Authentication.Application.ViewModels
+{
+	public class LoginViewModel
+	{
+		public string Name { get; set; }
+		public string Password { get; set; }
+		public decimal? Longitude { get; set; }
+		public decimal Latitude { get; set; }
+
+        public decimal Total()
+        {
+            return Longitude + Latitude;
+        }
+	}
+
+
+
+    public struct Pessoa
+    {
+        public int Idade { get; set; }
+        public string Nome { get; set; }
+        public string Cpf { get; set; }
+        public string Email { get; set; }
+
+        public override string ToString()
+        {
+            return $""Nome: {this.Nome}"" +
+                   $""Email: {this.Email}"";
+        }
+    }
+}";
+
+            var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"{Constants.PrefixMethodName}Idade", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Cpf", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Email", result);
+            Assert.DoesNotContain("ToString", result);
+        }
     }
 }

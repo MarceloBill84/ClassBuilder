@@ -26,56 +26,43 @@ namespace ClassBuilder.Factories
 
             string nameSpace = GetNameSpace(syntaxTree);
 
-            TypeDeclarationSyntax classDeclaration = GetTypeDeclarion(root);
+            var typeDeclarations = GetTypeDeclarions(root);
 
-            if (classDeclaration is null)
-                throw new ValidationException("It wasn't identified the class to generate builder class");
+            if (typeDeclarations is null || typeDeclarations.Count == 0)
+                throw new ValidationException("It wasn't identified class to generate builder");
 
-            var originalClassName = classDeclaration.Identifier.Text;
+            GenerateUsingAndNameSpace(content, usings, nameSpace);
 
-            var properties = classDeclaration.Members
+            for (int i = 0; i<typeDeclarations.Count; i++)
+            {
+                if (i > 0)
+                    content.AppendLine("");
+
+                var typeDeclaration = typeDeclarations[i];
+
+                var originalClassName = typeDeclaration.Identifier.Text;
+
+                var properties = typeDeclaration.Members
                                                 .OfType<PropertyDeclarationSyntax>()
-                                                .Where(prop => IsEligibleForBuilder(prop, classDeclaration));
+                                                .Where(prop => IsEligibleForBuilder(prop, typeDeclaration));
 
 
 
-            var propertiesInfo = properties.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text)).ToList();
+                var propertiesInfo = properties.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text)).ToList();
 
-            if (!propertiesInfo.Any())
-                throw new ValidationException("It wasn't identified public properties to generate builder class");
+                if (!propertiesInfo.Any())
+                    throw new ValidationException("It wasn't identified public properties to generate builder");
 
-            GenerateBuilder(content, usings, nameSpace, originalClassName, propertiesInfo);
+                GenerateBuilder(content, originalClassName, typeDeclaration, propertiesInfo);
+            }
+
+            content.AppendLine("}");
 
             return content.ToString();
         }
 
-        private static TypeDeclarationSyntax GetTypeDeclarion(CompilationUnitSyntax root)
+        private static void GenerateUsingAndNameSpace(StringBuilder content, List<string> usings, string nameSpace)
         {
-            TypeDeclarationSyntax classDeclaration = root.DescendantNodes()
-                                   .OfType<ClassDeclarationSyntax>()
-                                   .FirstOrDefault();
-
-            if (classDeclaration != null)
-                return classDeclaration;
-
-            TypeDeclarationSyntax recordDeclaration = root.DescendantNodes()
-                                   .OfType<RecordDeclarationSyntax>()
-                                   .FirstOrDefault();
-
-            if (recordDeclaration != null)
-                return recordDeclaration;
-
-            TypeDeclarationSyntax structDeclaration = root.DescendantNodes()
-                                   .OfType<StructDeclarationSyntax>()
-                                   .FirstOrDefault();
-
-            return structDeclaration;
-        }
-
-        private static void GenerateBuilder(StringBuilder content, List<string> usings, string nameSpace, string originalClassName, List<PropertyInfo> propertiesInfo)
-        {
-            var newClassName = $"{originalClassName}Builder";
-
             if (usings.Any())
             {
                 foreach (var us in usings)
@@ -90,6 +77,19 @@ namespace ClassBuilder.Factories
                 content.AppendLine($"namespace {nameSpace}");
 
             content.AppendLine("{");
+        }
+
+        private static List<TypeDeclarationSyntax> GetTypeDeclarions(CompilationUnitSyntax root)
+        {
+            return root.DescendantNodes()
+                                   .OfType<TypeDeclarationSyntax>()
+                                   .Where(p => !p.Modifiers.Any(m => m.IsKind(SyntaxKind.AbstractKeyword)))
+                                   .ToList();
+        }
+
+        private static void GenerateBuilder(StringBuilder content, string originalClassName, TypeDeclarationSyntax typeDeclarationSyntax, List<PropertyInfo> propertiesInfo)
+        {
+            var newClassName = $"{originalClassName}Builder";
 
             content.AppendLine($"\tpublic class {newClassName}");
 
@@ -101,11 +101,9 @@ namespace ClassBuilder.Factories
 
             GenerateMethodsToSetValues(content, newClassName, propertiesInfo);
 
-            GenerateMethodBuild(content, originalClassName, propertiesInfo);
+            GenerateMethodBuild(content, originalClassName, typeDeclarationSyntax, propertiesInfo);
 
             content.AppendLine("\t}");
-
-            content.AppendLine("}");
         }
 
         private static string GetNameSpace(SyntaxTree syntaxTree)
@@ -133,23 +131,44 @@ namespace ClassBuilder.Factories
             return usingDirectives.Select(p => p.ToFullString()).ToList();
         }
 
-        private static void GenerateMethodBuild(StringBuilder content, string originalClassName, IList<PropertyInfo> properties)
+        private static void GenerateMethodBuild(StringBuilder content, string originalClassName, TypeDeclarationSyntax typeDeclarationSyntax, IList<PropertyInfo> properties)
         {
             content.AppendLine($"\t\tpublic {originalClassName} Build()");
             content.AppendLine("\t\t{");
             content.AppendLine($"\t\t\treturn new {originalClassName}");
-            content.AppendLine("\t\t\t{");
 
-            for (int i = 0; i < properties.Count; i++)
+
+            if (typeDeclarationSyntax.ParameterList != null)
             {
-                var setValue = $"\t\t\t\t{properties[i].Name} = _{properties[i].Name.GetWordWithFirstLetterDown()}";
-                if (i + 1 != properties.Count)
-                    setValue = string.Concat(setValue, ",");
+                content.AppendLine("\t\t\t(");
 
-                content.AppendLine(setValue);
+                for (int i = 0; i < properties.Count; i++)
+                {
+                    var setValue = $"\t\t\t\t_{properties[i].Name.GetWordWithFirstLetterDown()}";
+                    if (i + 1 != properties.Count)
+                        setValue = string.Concat(setValue, ",");
+
+                    content.AppendLine(setValue);
+                }
+
+                content.AppendLine("\t\t\t);");
+            }
+            else
+            {
+                content.AppendLine("\t\t\t{");
+
+                for (int i = 0; i < properties.Count; i++)
+                {
+                    var setValue = $"\t\t\t\t{properties[i].Name} = _{properties[i].Name.GetWordWithFirstLetterDown()}";
+                    if (i + 1 != properties.Count)
+                        setValue = string.Concat(setValue, ",");
+
+                    content.AppendLine(setValue);
+                }
+
+                content.AppendLine("\t\t\t};");
             }
 
-            content.AppendLine("\t\t\t};");
             content.AppendLine("\t\t}");
         }
 
