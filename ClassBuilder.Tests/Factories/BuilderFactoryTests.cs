@@ -210,5 +210,32 @@ namespace Authentication.Application.ViewModels
 
             Assert.Throws<ValidationException>(() => BuilderFactory.Create(fileContent));
         }
+
+        [Fact]
+        public void TestFileWithoutUsings()
+        {
+            var fileContent = @"namespace ClassBuilder.Dto
+{
+    public class PropertyInfo
+    {
+        public string Type { get; }
+        public string Name { get; }
+
+        public PropertyInfo(string type, string name)
+        {
+            Type = type;
+            Name = name;
+        }
+    }
+}
+";
+
+            var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"PropertyInfo{Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Name", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Type", result);
+        }
     }
 }
