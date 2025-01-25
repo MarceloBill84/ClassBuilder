@@ -1,5 +1,4 @@
-﻿using ClassBuilder.Constanst;
-using ClassBuilder.Dto;
+﻿using ClassBuilder.Dto;
 using ClassBuilder.Exceptions;
 using ClassBuilder.Extensions;
 using Microsoft.CodeAnalysis;
@@ -42,13 +41,7 @@ namespace ClassBuilder.Factories
 
                 var originalClassName = typeDeclaration.Identifier.Text;
 
-                var properties = typeDeclaration.Members
-                                                .OfType<PropertyDeclarationSyntax>()
-                                                .Where(prop => IsEligibleForBuilder(prop, typeDeclaration));
-
-
-
-                var propertiesInfo = properties.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text)).ToList();
+                var propertiesInfo = GetPropertiesInfo(typeDeclaration);
 
                 if (!propertiesInfo.Any())
                     throw new ValidationException("It wasn't identified public properties to generate builder");
@@ -59,6 +52,37 @@ namespace ClassBuilder.Factories
             content.AppendLine("}");
 
             return content.ToString();
+        }
+
+        private static List<PropertyInfo> GetPropertiesInfo(TypeDeclarationSyntax typeDeclaration)
+        {
+            IEnumerable<ConstructorDeclarationSyntax> constructors = GetPublicConstructors(typeDeclaration);
+
+            List<PropertyInfo> propertiesInfo;
+
+            if (constructors.Any())
+            {
+                var parameters = constructors.First().ParameterList.Parameters.ToList();
+
+                propertiesInfo = parameters.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text.GetWordWithFirstLetterUpper())).ToList();
+            }
+            else
+            {
+                var properties = typeDeclaration.Members
+                                            .OfType<PropertyDeclarationSyntax>()
+                                            .Where(prop => IsEligibleForBuilder(prop, typeDeclaration));
+
+                propertiesInfo = properties.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text.GetWordWithFirstLetterUpper())).ToList();
+            }
+
+            return propertiesInfo;
+        }
+
+        private static IEnumerable<ConstructorDeclarationSyntax> GetPublicConstructors(TypeDeclarationSyntax typeDeclaration)
+        {
+            return typeDeclaration.Members
+                .OfType<ConstructorDeclarationSyntax>()
+                .Where(constructor => constructor.Modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword)));
         }
 
         private static void GenerateHeader(StringBuilder content, List<string> usings, string nameSpace)
@@ -89,7 +113,7 @@ namespace ClassBuilder.Factories
 
         private static void GenerateBuilder(StringBuilder content, string originalClassName, TypeDeclarationSyntax typeDeclarationSyntax, List<PropertyInfo> propertiesInfo)
         {
-            var newClassName = $"{originalClassName}{Constants.SuffixClassName}";
+            var newClassName = $"{originalClassName}{Constants.Constants.SuffixClassName}";
 
             content.AppendLine($"\tpublic class {newClassName}");
 
@@ -137,8 +161,7 @@ namespace ClassBuilder.Factories
             content.AppendLine("\t\t{");
             content.AppendLine($"\t\t\treturn new {originalClassName}");
 
-
-            if (typeDeclarationSyntax.ParameterList != null)
+            if (typeDeclarationSyntax.ParameterList != null || GetPublicConstructors(typeDeclarationSyntax).Any())
             {
                 content.AppendLine("\t\t\t(");
 
@@ -183,7 +206,7 @@ namespace ClassBuilder.Factories
         {
             foreach (var item in properties)
             {
-                content.AppendLine($"\t\tpublic {className} {Constants.PrefixMethodName}{item.Name}({item.Type} {item.Name.GetWordWithFirstLetterDown()})");
+                content.AppendLine($"\t\tpublic {className} {Constants.Constants.PrefixMethodName}{item.Name}({item.Type} {item.Name.GetWordWithFirstLetterDown()})");
                 content.AppendLine("\t\t{");
                 content.AppendLine($"\t\t\t_{item.Name.GetWordWithFirstLetterDown()} = {item.Name.GetWordWithFirstLetterDown()};");
                 content.AppendLine("\t\t\treturn this;");

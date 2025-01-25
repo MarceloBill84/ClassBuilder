@@ -1,4 +1,4 @@
-﻿namespace ClassBuilder.Constanst
+﻿namespace ClassBuilder.Constants
 {
     public static class Constants
     {

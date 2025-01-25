@@ -1,4 +1,3 @@
-using ClassBuilder.Constanst;
 using ClassBuilder.Exceptions;
 using ClassBuilder.Factories;
 
@@ -30,10 +29,10 @@ namespace Authentication.Application.ViewModels
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"{Constants.PrefixMethodName}Name", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Password", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Longitude", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Latitude", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Name", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Password", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Longitude", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Latitude", result);
             Assert.DoesNotContain("Total", result);
         }
 
@@ -54,8 +53,8 @@ public class BankAccount(string accountID, string owner)
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"{Constants.PrefixMethodName}AccountID", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Owner", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}AccountID", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Owner", result);
             Assert.DoesNotContain("ToString", result);
         }
 
@@ -75,8 +74,8 @@ public class BankAccount(string accountID, string owner)
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Email", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Nome", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Email", result);
         }
 
         [Fact]
@@ -98,7 +97,7 @@ public class BankAccount(string accountID, string owner)
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"{Constants.PrefixMethodName}FullName", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}FullName", result);
         }
 
         [Fact]
@@ -121,10 +120,10 @@ public class BankAccount(string accountID, string owner)
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"{Constants.PrefixMethodName}Idade", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Cpf", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Email", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Idade", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Nome", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Cpf", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Email", result);
             Assert.DoesNotContain("ToString", result);
         }
 
@@ -168,18 +167,18 @@ namespace Authentication.Application.ViewModels
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"LoginViewModel{Constants.SuffixClassName}", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Name", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Password", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Longitude", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Latitude", result);
+            Assert.Contains($"LoginViewModel{Constants.Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Name", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Password", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Longitude", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Latitude", result);
             Assert.DoesNotContain("Total", result);
 
-            Assert.Contains($"Pessoa{Constants.SuffixClassName}", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Idade", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Cpf", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Email", result);
+            Assert.Contains($"Pessoa{Constants.Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Idade", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Nome", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Cpf", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Email", result);
             Assert.DoesNotContain("ToString", result);
         }
 
@@ -233,9 +232,40 @@ namespace Authentication.Application.ViewModels
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
-            Assert.Contains($"PropertyInfo{Constants.SuffixClassName}", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Name", result);
-            Assert.Contains($"{Constants.PrefixMethodName}Type", result);
+            Assert.Contains($"PropertyInfo{Constants.Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Name", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Type", result);
+        }
+
+        [Fact]
+        public void TestInheritedClass()
+        {
+            var fileContent = @"using Borders.Enums;
+
+namespace Borders.Entities
+{
+    public class QuotePost : Post
+    {
+        public override PostType Type => PostType.QuotePost;
+        public string Description { get; private set; }
+        public int PostId { get; private set; }
+        protected QuotePost() { }
+        public QuotePost(int userId, string description, int postId) : base(userId)
+        {
+            Description = description;
+            PostId = postId;
+        }
+    }
+}";
+
+            var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"QuotePost{Constants.Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}UserId", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Description", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}PostId", result);
+            Assert.DoesNotContain($"{Constants.Constants.PrefixMethodName}Type", result);
         }
     }
 }
