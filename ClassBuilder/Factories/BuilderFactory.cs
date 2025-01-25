@@ -31,7 +31,7 @@ namespace ClassBuilder.Factories
             if (typeDeclarations is null || typeDeclarations.Count == 0)
                 throw new ValidationException("It wasn't identified class to generate builder");
 
-            GenerateUsingAndNameSpace(content, usings, nameSpace);
+            GenerateHeader(content, usings, nameSpace);
 
             for (int i = 0; i<typeDeclarations.Count; i++)
             {
@@ -61,7 +61,7 @@ namespace ClassBuilder.Factories
             return content.ToString();
         }
 
-        private static void GenerateUsingAndNameSpace(StringBuilder content, List<string> usings, string nameSpace)
+        private static void GenerateHeader(StringBuilder content, List<string> usings, string nameSpace)
         {
             if (usings.Any())
             {
@@ -89,7 +89,7 @@ namespace ClassBuilder.Factories
 
         private static void GenerateBuilder(StringBuilder content, string originalClassName, TypeDeclarationSyntax typeDeclarationSyntax, List<PropertyInfo> propertiesInfo)
         {
-            var newClassName = $"{originalClassName}Builder";
+            var newClassName = $"{originalClassName}{Constants.SuffixClassName}";
 
             content.AppendLine($"\tpublic class {newClassName}");
 

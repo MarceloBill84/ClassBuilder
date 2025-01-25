@@ -1,4 +1,5 @@
 using ClassBuilder.Constanst;
+using ClassBuilder.Exceptions;
 using ClassBuilder.Factories;
 
 namespace ClassBuilder.Tests.Factories
@@ -9,7 +10,6 @@ namespace ClassBuilder.Tests.Factories
         public void TestDefaultClass()
         {
             var fileContent = @"using System;
-using lerolero;
 
 namespace Authentication.Application.ViewModels
 {
@@ -132,7 +132,6 @@ public class BankAccount(string accountID, string owner)
         public void TestMultiClassInFile()
         {
             var fileContent = @"using System;
-using lerolero;
 
 namespace Authentication.Application.ViewModels
 {
@@ -142,7 +141,7 @@ namespace Authentication.Application.ViewModels
 		public string Password { get; set; }
 		public decimal? Longitude { get; set; }
 		public decimal Latitude { get; set; }
-
+        
         public decimal Total()
         {
             return Longitude + Latitude;
@@ -169,11 +168,47 @@ namespace Authentication.Application.ViewModels
             var result = BuilderFactory.Create(fileContent);
 
             Assert.NotNull(result);
+            Assert.Contains($"LoginViewModel{Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Name", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Password", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Longitude", result);
+            Assert.Contains($"{Constants.PrefixMethodName}Latitude", result);
+            Assert.DoesNotContain("Total", result);
+
+            Assert.Contains($"Pessoa{Constants.SuffixClassName}", result);
             Assert.Contains($"{Constants.PrefixMethodName}Idade", result);
             Assert.Contains($"{Constants.PrefixMethodName}Nome", result);
             Assert.Contains($"{Constants.PrefixMethodName}Cpf", result);
             Assert.Contains($"{Constants.PrefixMethodName}Email", result);
             Assert.DoesNotContain("ToString", result);
+        }
+
+        [Fact]
+        public void TestEmptyClass()
+        {
+            var fileContent = @"using System;
+
+namespace Authentication.Application.ViewModels
+{
+	public class LoginViewModel
+	{
+		
+	}
+}";
+
+            Assert.Throws<ValidationException>(() => BuilderFactory.Create(fileContent));
+        }
+
+        [Fact]
+        public void TestFileWithoutClass()
+        {
+            var fileContent = @"using System;
+
+namespace Authentication.Application.ViewModels
+{	
+}";
+
+            Assert.Throws<ValidationException>(() => BuilderFactory.Create(fileContent));
         }
     }
 }
