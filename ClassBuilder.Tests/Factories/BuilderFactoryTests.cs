@@ -44,8 +44,8 @@ namespace Authentication.Application.ViewModels;
 
 public class BankAccount(string accountID, string owner)
 {
-    public string AccountID { get; } = accountID;
     public string Owner { get; } = owner;
+    public string AccountID { get; } = accountID;    
 
     public override string ToString() => $""Account ID: {AccountID}, Owner: {Owner}"";
 }";
@@ -265,6 +265,31 @@ namespace Borders.Entities
             Assert.Contains($"{Constants.Constants.PrefixMethodName}UserId", result);
             Assert.Contains($"{Constants.Constants.PrefixMethodName}Description", result);
             Assert.Contains($"{Constants.Constants.PrefixMethodName}PostId", result);
+            Assert.DoesNotContain($"{Constants.Constants.PrefixMethodName}Type", result);
+        }
+
+        [Fact]
+        public void TestEmptyConstructorClass()
+        {
+            var fileContent = @"using Borders.Enums;
+
+namespace Borders.Entities
+{
+    public class QuotePost
+    {
+        public override PostType Type => PostType.QuotePost;
+        public string Description { get; set; }
+        public int PostId { get; private set; }
+        public QuotePost() { }
+    }
+}";
+
+            var result = BuilderFactory.Create(fileContent);
+
+            Assert.NotNull(result);
+            Assert.Contains($"QuotePost{Constants.Constants.SuffixClassName}", result);
+            Assert.Contains($"{Constants.Constants.PrefixMethodName}Description", result);
+            Assert.DoesNotContain($"{Constants.Constants.PrefixMethodName}PostId", result);
             Assert.DoesNotContain($"{Constants.Constants.PrefixMethodName}Type", result);
         }
     }

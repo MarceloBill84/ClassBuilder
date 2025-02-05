@@ -56,33 +56,35 @@ namespace ClassBuilder.Factories
 
         private static List<PropertyInfo> GetPropertiesInfo(TypeDeclarationSyntax typeDeclaration)
         {
-            IEnumerable<ConstructorDeclarationSyntax> constructors = GetPublicConstructors(typeDeclaration);
+            IEnumerable<ConstructorDeclarationSyntax> constructors = GetPublicConstructorsWithParameters(typeDeclaration);
 
-            List<PropertyInfo> propertiesInfo;
+            List<ParameterSyntax> parameters = null;
 
             if (constructors.Any())
             {
-                var parameters = constructors.First().ParameterList.Parameters.ToList();
-
-                propertiesInfo = parameters.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text.GetWordWithFirstLetterUpper())).ToList();
+                parameters = constructors.First().ParameterList.Parameters.ToList();
             }
-            else
+            else if (typeDeclaration.ParameterList != null)
             {
-                var properties = typeDeclaration.Members
-                                            .OfType<PropertyDeclarationSyntax>()
-                                            .Where(prop => IsEligibleForBuilder(prop, typeDeclaration));
-
-                propertiesInfo = properties.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text.GetWordWithFirstLetterUpper())).ToList();
+                parameters = typeDeclaration.ParameterList.Parameters.ToList();
             }
 
-            return propertiesInfo;
+            if (!parameters.IsNullOrEmpty())
+                return parameters.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text.GetWordWithFirstLetterUpper())).ToList();
+
+
+            var properties = typeDeclaration.Members
+                                        .OfType<PropertyDeclarationSyntax>()
+                                        .Where(prop => IsEligibleForBuilder(prop, typeDeclaration));
+
+            return properties.Select(p => new PropertyInfo(p.Type.ToString(), p.Identifier.Text.GetWordWithFirstLetterUpper())).ToList();
         }
 
-        private static IEnumerable<ConstructorDeclarationSyntax> GetPublicConstructors(TypeDeclarationSyntax typeDeclaration)
+        private static IEnumerable<ConstructorDeclarationSyntax> GetPublicConstructorsWithParameters(TypeDeclarationSyntax typeDeclaration)
         {
             return typeDeclaration.Members
                 .OfType<ConstructorDeclarationSyntax>()
-                .Where(constructor => constructor.Modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword)));
+                .Where(constructor => constructor.Modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword)) && constructor.ParameterList.Parameters.Count > 0);
         }
 
         private static void GenerateHeader(StringBuilder content, List<string> usings, string nameSpace)
@@ -161,7 +163,7 @@ namespace ClassBuilder.Factories
             content.AppendLine("\t\t{");
             content.AppendLine($"\t\t\treturn new {originalClassName}");
 
-            if (typeDeclarationSyntax.ParameterList != null || GetPublicConstructors(typeDeclarationSyntax).Any())
+            if (typeDeclarationSyntax.ParameterList != null || GetPublicConstructorsWithParameters(typeDeclarationSyntax).Any())
             {
                 content.AppendLine("\t\t\t(");
 
@@ -225,20 +227,18 @@ namespace ClassBuilder.Factories
 
         static bool IsEligibleForBuilder(PropertyDeclarationSyntax property, TypeDeclarationSyntax classDeclaration)
         {
-            // Verifica se a propriedade é pública
             bool isPublic = property.Modifiers.Any(SyntaxKind.PublicKeyword);
 
-            // Verifica se o set é privado ou ausente
             var accessorList = property.AccessorList;
             bool hasPrivateSetter = accessorList?.Accessors
                                                  .Any(acc => acc.IsKind(SyntaxKind.SetAccessorDeclaration) &&
                                                              acc.Modifiers.Any(SyntaxKind.PrivateKeyword)) ?? false;
 
-            // Verifica se a propriedade é preenchida via construtor
             bool isSetInConstructor = IsAssignedInConstructor(property, classDeclaration);
 
-            // Retorna true apenas para as propriedades elegíveis
-            return isPublic && (!hasPrivateSetter || isSetInConstructor);
+            bool hasSetter = accessorList?.Accessors.Any(a => a.IsKind(SyntaxKind.SetAccessorDeclaration) || a.IsKind(SyntaxKind.InitAccessorDeclaration)) ?? false;
+
+            return isPublic && hasSetter && (!hasPrivateSetter || isSetInConstructor);
         }
 
         static bool IsAssignedInConstructor(PropertyDeclarationSyntax property, TypeDeclarationSyntax classDeclaration)
